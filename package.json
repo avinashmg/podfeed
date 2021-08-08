@@ -1,11 +1,8 @@
 {
   "name": "podfeed",
   "version": "1.0.0",
-  "description": "Parse and generate podcast feeds.",
+  "description": "generate and parse podcast syndication",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,15 +11,15 @@
     "url": "git+https://github.com/avinashmg/podfeed.git"
   },
   "keywords": [
-    "Podcast",
-    "rss",
-    "podcast",
-    "rss"
+    "podcast"
   ],
   "author": "Avinash M G",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/avinashmg/podfeed/issues"
   },
-  "homepage": "https://github.com/avinashmg/podfeed#readme"
+  "homepage": "https://github.com/avinashmg/podfeed#readme",
+  "dependencies": {
+    "xml-js": "^1.6.11"
+  }
 }

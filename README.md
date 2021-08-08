@@ -1,2 +1,3 @@
 # podfeed
-Generate and parse podcast feeds easily
+
+Generate and parse podcast syndication easily
