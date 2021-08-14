@@ -9,10 +9,11 @@ class Podfeed {
   owner = { title: "", email: "" };
   explicit = "clean";
   items = [];
-  constructor(title, link, description) {
-    this.title = title;
-    this.link = link;
-    this.description = description;
+  constructor(args) {
+    // TODO: Add validation (regex for link and image)
+    for(const arg in args) {
+      this[arg] = args[arg];
+    }
   }
   addEpisode(episode) {
     this.items.unshift({
