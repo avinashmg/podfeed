@@ -10,3 +10,9 @@ test('passing arguments to constructor', () => {
   expect(podfeedObj.title).toBe(expectedTitle);
   expect(podfeedObj.description).toBe(expectedDescription);
 })
+
+test('passing xml file url to constructor', () => {
+  const xmlFileLocation = 'testing/sample-podcast-feed.xml'; // Because the execution environment is the root of the project
+  const podfeedObj = new Podfeed(xmlFileLocation);
+  expect(podfeedObj.title).toBe('The Unknown Podcast');
+})

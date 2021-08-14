@@ -1,4 +1,5 @@
 const { xml2js } = require("xml-js");
+const fs = require('fs');
 
 class Podfeed {
   title = "";
@@ -10,8 +11,19 @@ class Podfeed {
   explicit = "clean";
   items = [];
   constructor(args) {
+    if (typeof (args) == 'string') {
+      // Probably a file or xml string
+      try {
+        const data = fs.readFileSync(args);
+        this.read(data);
+      } catch (err) {
+        console.error(`Error while reading file ${args}:`);
+        console.error(err);
+      }
+      return;
+    }
     // TODO: Add validation (regex for link and image)
-    for(const arg in args) {
+    for (const arg in args) {
       this[arg] = args[arg];
     }
   }
@@ -30,33 +42,44 @@ class Podfeed {
     this.title = obj.title._text;
     this.description = obj.description._text;
     this.link = obj.link._text;
-    this.image = obj.image.url._text;
-    this.category = obj["itunes:category"]._attributes.text;
-    this.explicit = obj["itunes:explicit"]._text;
-    this.owner.title = obj["itunes:owner"]["itunes:name"]._text;
-    this.owner.email = obj["itunes:owner"]["itunes:email"]._text;
-    this.items = [];
-    if (Array.isArray(obj.item)) {
-      obj.item.forEach((i) => {
-        const properties = {
-          title: i.title._text,
-          description: i.description._text,
-          link: i.link._text,
-          guid: i.guid._text,
-          src: i.enclosure._attributes.url,
-          date: i.pubDate._text,
-        };
-        this.items.push(properties);
-      });
-    } else if (obj.item) {
-      this.items.push({
-        title: obj.item.title._text,
-        description: obj.item.description._text,
-        link: obj.item.link._text,
-        guid: obj.item.guid._text,
-        src: obj.item.enclosure._attributes.url,
-        date: obj.item.pubDate._text,
-      });
+    try {
+      // Putting this into a try block because sometimes podcasts have their image in a google play wrapper
+      this.image = obj.image.url._text;
+    } catch (err) {
+      console.log('No or unsupported image found!')
+    }
+    try {
+      // Getting an error thrown here too!
+      this.category = obj["itunes:category"]._attributes.text;
+      this.explicit = obj["itunes:explicit"]._text;
+      this.owner.title = obj["itunes:owner"]["itunes:name"]._text;
+      this.owner.email = obj["itunes:owner"]["itunes:email"]._text;
+      this.items = [];
+      if (Array.isArray(obj.item)) {
+        obj.item.forEach((i) => {
+          const properties = {
+            title: i.title._text,
+            description: i.description._text,
+            link: i.link._text,
+            guid: i.guid._text,
+            src: i.enclosure._attributes.url,
+            date: i.pubDate._text,
+          };
+          this.items.push(properties);
+        });
+      } else if (obj.item) {
+        this.items.push({
+          title: obj.item.title._text,
+          description: obj.item.description._text,
+          link: obj.item.link._text,
+          guid: obj.item.guid._text,
+          src: obj.item.enclosure._attributes.url,
+          date: obj.item.pubDate._text,
+        });
+      }
+    } catch (err) {
+      // TODO: Add a better error message here
+      console.log('Some error while reading subobjects');
     }
   }
   build() {
